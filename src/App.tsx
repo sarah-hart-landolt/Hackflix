@@ -1,12 +1,25 @@
-import React from "react";
+import React, { ChangeEvent, useState } from "react";
 import {ICategory, IMovie} from './types';
+import {isMovieTitleContain} from './utils/isMovieTitleContain';
 
 interface AppProps {
   categories: ICategory[],
   movies: IMovie[],
 }
 
+let counter = 0
+
+
 export function App({categories, movies}: AppProps) {
+  const [searchTerm, updateSearchTerm] = useState("")
+
+
+  function handler(event:ChangeEvent <HTMLInputElement>) {
+    const searchTerm = event.target.value;
+    updateSearchTerm(searchTerm)
+  }
+
+  const filteredMovies= movies.filter(movie=> isMovieTitleContain(movie, searchTerm))
   return (
       <>
         {/* Start: Header Component */}
@@ -27,12 +40,12 @@ export function App({categories, movies}: AppProps) {
                 {/* Start: Search Component */}
                 <form className="flex mr-5 lg:mr-10">
                   <input
-                      role={'search'}
+                      role={'Search'}
                       type="text"
                       name="Search"
                       placeholder="Search"
                       className="search"
-                      onChange={() => {}}
+                      onChange={handler}
                   />
                   <button type="submit" className="search-btn">
                     <img src="./image/search.svg" alt="search" />
@@ -94,9 +107,9 @@ export function App({categories, movies}: AppProps) {
             <div className="container mx-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-10">
                     {/* Start: Movie Component */}
-                    {movies.map((movie)=> {
+                    {filteredMovies.map((movie)=> {
                       return(
-                        <div key={'movie-1'} className="single-movie relative">
+                        <div key={movie.id} className="single-movie relative">
                         <img src={movie.poster_path} alt={movie.title} />
                         <div className="movie-content flex items-center justify-center text-center absolute w-full h-full inset-0 px-4">
                           <div className="content-inner">
